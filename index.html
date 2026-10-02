@@ -1,0 +1,32 @@
+<!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BEKHOON BK001</title>
+<style>
+body{margin:0;background:#09070e;color:white;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.app{max-width:520px;margin:auto;min-height:100vh;padding:20px;box-sizing:border-box}
+header{display:flex;justify-content:space-between;color:#ff55d9;font-weight:800;font-size:22px}
+.cover{width:170px;height:170px;margin:32px auto 18px;border-radius:28px;display:grid;place-items:center;font-size:70px;background:linear-gradient(135deg,#ff3cac,#7548ff,#19d3ff)}
+h1,p{text-align:center}h1{margin:0 0 5px}p{opacity:.6}
+#lyrics{height:240px;overflow:auto;text-align:center;margin:18px 0}
+.line{opacity:.3;font-size:18px;padding:8px}.active{opacity:1;font-size:25px;font-weight:800;color:#ff77dc}
+input{width:100%;accent-color:#ff4fd8}.times{display:flex;justify-content:space-between;direction:ltr;opacity:.6}
+.controls{display:flex;justify-content:center;gap:20px;margin:16px}button{border:0;border-radius:50%;width:55px;height:55px;background:#292332;color:white;font-size:20px}
+#play{width:70px;height:70px;background:linear-gradient(135deg,#ff3cac,#7548ff)}.status{text-align:center;min-height:24px;color:#9ff5bb}
+audio{width:100%;margin-top:15px}
+</style>
+<main class="app"><header><span>‹</span><span>BEKHOON</span><span>♡</span></header>
+<div class="cover">🎤</div><h1>امشب بخون</h1><p>BEKHOON ORIGINAL</p>
+<div id="lyrics"></div><input id="seek" type="range" min="0" max="47" value="0" step=".01">
+<div class="times"><span id="now">00:00</span><span>00:47</span></div>
+<div class="controls"><button onclick="skip(-5)">↶</button><button id="play" onclick="toggle()">▶</button><button onclick="skip(5)">↷</button></div>
+<div id="status" class="status">روی ▶ بزنید</div>
+<audio id="audio" preload="metadata" controls src="audio/BK001.mp3"></audio></main>
+<script>
+const L=[{"start": 4, "end": 8, "text": "امشب چراغا روشنه"}, {"start": 8, "end": 12, "text": "دل من از غصه دوره"}, {"start": 12, "end": 16, "text": "بذار صداتو بشنوم"}, {"start": 16, "end": 21, "text": "این شب برای ماست، دوباره"}, {"start": 21, "end": 25, "text": "دستاتو بالا ببر"}, {"start": 25, "end": 29, "text": "با ریتم این آهنگ بخون"}, {"start": 29, "end": 33, "text": "هرچی که توی قلبته"}, {"start": 33, "end": 38, "text": "امشب فقط برای من بخون"}, {"start": 38, "end": 41, "text": "🎤 امشب بخون"}, {"start": 41, "end": 44, "text": "بلندتر از همیشه"}, {"start": 44, "end": 47, "text": "اینجا صدای تو، قشنگ‌ترین صدا میشه"}],a=document.getElementById('audio'),p=document.getElementById('play'),s=document.getElementById('seek'),n=document.getElementById('now'),box=document.getElementById('lyrics');
+L.forEach((x,i)=>{let d=document.createElement('div');d.className='line';d.id='l'+i;d.textContent=x.text;box.appendChild(d)});
+function fmt(v){v=Math.floor(v||0);return String(Math.floor(v/60)).padStart(2,'0')+':'+String(v%60).padStart(2,'0')}
+function toggle(){if(a.paused){a.play().then(()=>{p.textContent='Ⅱ';status.textContent='در حال پخش 🎵'}).catch(()=>status.textContent='از کنترل صوتی پایین صفحه استفاده کنید.')}else{a.pause();p.textContent='▶'}}
+function skip(v){a.currentTime=Math.max(0,Math.min(a.duration||47,a.currentTime+v))}
+a.ontimeupdate=()=>{s.value=a.currentTime;n.textContent=fmt(a.currentTime);let i=L.findLastIndex(x=>a.currentTime>=x.start);document.querySelectorAll('.line').forEach((e,j)=>e.classList.toggle('active',j===i));if(i>=0)document.getElementById('l'+i).scrollIntoView({behavior:'smooth',block:'center'})}
+s.oninput=()=>a.currentTime=+s.value;a.onended=()=>p.textContent='▶';
+</script></html>
