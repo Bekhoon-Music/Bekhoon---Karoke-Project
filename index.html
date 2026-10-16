@@ -29,4 +29,48 @@ function toggle(){if(a.paused){a.play().then(()=>{p.textContent='Ⅱ';status.tex
 function skip(v){a.currentTime=Math.max(0,Math.min(a.duration||47,a.currentTime+v))}
 a.ontimeupdate=()=>{s.value=a.currentTime;n.textContent=fmt(a.currentTime);let i=L.findLastIndex(x=>a.currentTime>=x.start);document.querySelectorAll('.line').forEach((e,j)=>e.classList.toggle('active',j===i));if(i>=0)document.getElementById('l'+i).scrollIntoView({behavior:'smooth',block:'center'})}
 s.oninput=()=>a.currentTime=+s.value;a.onended=()=>p.textContent='▶';
-</script></html>
+</script>
+ <div id="recorder" Style="margin-top:16px;text-align:center">
+   <buttom id="recordBtn" onclick="startRecording()"> شروع ضبط صدا</button>
+   <buttom id="stopBtn" onclick="stopRecording()" disabled> توقف ضبط</button>
+   <audio id ="myRecording" controls style="disply:none;width:100%;margin-top:12px"></audio>
+   </div>
+<script>
+let recorder;
+let recordedChunks = [];
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recordedChunks = [];
+    recorder = new MediaRecorder(stream);
+    recorder.ondataavailable = (event) => {
+      if (event.data.size > 0) recordedChunks.push(event.data);
+    };
+ recorder.onstop = () => {
+      const blob = new Blob(recordedChunks, { type: recorder.mimeType });
+      const url = URL.createObjectURL(blob);
+      const player = document.getElementById('myRecording');
+      player.src = url;
+      player.style.display = 'block';
+      stream.getTracks().forEach(track => track.stop());
+    };
+
+    recorder.start();
+    document.getElementById('recordBtn').disabled = true;
+    document.getElementById('stopBtn').disabled = false;
+    document.getElementById('status').textContent = '🔴 ضبط صدا در حال انجام است';
+  } catch (error) {
+    alert('برای ضبط صدا، اجازه دسترسی به میکروفن را بده.');
+  }
+}
+function stopRecording() {
+  if (recorder && recorder.state === 'recording') {
+    recorder.stop();
+    document.getElementById('recordBtn').disabled = false;
+    document.getElementById('stopBtn').disabled = true;
+    document.getElementById('status').textContent = 'ضبط تمام شد؛ صدایت را پخش کن.';
+  }
+}
+</script>    
+</html>
