@@ -31,9 +31,9 @@ a.ontimeupdate=()=>{s.value=a.currentTime;n.textContent=fmt(a.currentTime);let i
 s.oninput=()=>a.currentTime=+s.value;a.onended=()=>p.textContent='▶';
 </script>
 <div id="recorder" style="margin-top:16px;text-align:center;display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
-   <buttom id="recordBtn" onclick="startRecording()"> شروع ضبط صدا</button>
-   <buttom id="stopBtn" onclick="stopRecording()" disabled> توقف ضبط</button>
-   <audio id ="myRecording" controls style="disply:none;width:100%;margin-top:12px"></audio>
+   <button id="recordBtn" onclick="startRecording()"> شروع ضبط صدا</button>
+   <button id="stopBtn" onclick="stopRecording()" disabled> توقف ضبط</button>
+   <audio id ="myRecording" controls style="display:none;width:100%;margin-top:12px"></audio>
    </div>
 <script>
 let recorder;
