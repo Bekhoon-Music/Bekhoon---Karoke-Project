@@ -31,10 +31,15 @@ a.ontimeupdate=()=>{s.value=a.currentTime;n.textContent=fmt(a.currentTime);let i
 s.oninput=()=>a.currentTime=+s.value;a.onended=()=>p.textContent='▶';
 </script>
 <div id="recorder" style="margin-top:16px;text-align:center;display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
-   <button id="recordBtn" onclick="startRecording()"> شروع ضبط صدا</button>
-   <button id="stopBtn" onclick="stopRecording()" disabled> توقف ضبط</button>
-   <audio id ="myRecording" controls style="display:none;width:100%;margin-top:12px"></audio>
-   </div>
+  <button id="recordBtn" onclick="startRecording()" style="background-color:#1976d2;color:white;border:none;border-radius:8px;padding:12px 20px;font-size:16px;cursor:pointer">
+    شروع ضبط صدا
+
+  </button>
+  <button id="stopBtn" onclick="stopRecording()" disabled style="background-color:#d32f2f;color:white;border:none;border-radius:8px;padding:12px 20px;font-size:16px;cursor:pointer">
+    توقف ضبط
+  </button>
+  <audio id="myRecording" controls style="display:none;width:100%;margin-top:12px"></audio>
+</div>   
 <script>
 let recorder;
 let recordedChunks = [];
