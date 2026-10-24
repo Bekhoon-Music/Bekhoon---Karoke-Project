@@ -53,14 +53,20 @@ async function startRecording() {
       if (event.data.size > 0) recordedChunks.push(event.data);
     };
  recorder.onstop = () => {
-      const blob = new Blob(recordedChunks, { type: recorder.mimeType });
-      const url = URL.createObjectURL(blob);
-      const player = document.getElementById('myRecording');
-      player.src = url;
-      player.style.display = 'block';
-      stream.getTracks().forEach(track => track.stop());
-    };
-
+  const blob = new Blob(recordedChunks, {
+    type: recorder.mimeType || 'audio/webm'
+  });
+  const player = document.getElementById('myRecording');
+  if (blob.size > 0 && player) {
+    player.src = URL.createObjectURL(blob);
+    player.style.display = 'block';
+    player.controls = true;
+    player.load();
+  } else {
+    alert('صدایی ضبط نشد. دوباره امتحان کن.');
+  }
+  stream.getTracks().forEach(track => track.stop());
+};
     recorder.start();
     document.getElementById('recordBtn').disabled = true;
     document.getElementById('stopBtn').disabled = false;
