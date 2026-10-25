@@ -30,8 +30,8 @@ function skip(v){a.currentTime=Math.max(0,Math.min(a.duration||47,a.currentTime+
 a.ontimeupdate=()=>{s.value=a.currentTime;n.textContent=fmt(a.currentTime);let i=L.findLastIndex(x=>a.currentTime>=x.start);document.querySelectorAll('.line').forEach((e,j)=>e.classList.toggle('active',j===i));if(i>=0)document.getElementById('l'+i).scrollIntoView({behavior:'smooth',block:'center'})}
 s.oninput=()=>a.currentTime=+s.value;a.onended=()=>p.textContent='▶';
 </script>
-<div id="recorder" style="margin-top:16px;text-align:center;display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
-  <button id="recordBtn" onclick="startRecording()" style="background-color:#1976d2;color:white;border:none;border-radius:8px;padding:12px 20px;font-size:16px;cursor:pointer">
+<div id="recorder" style="margin-top:16px;text-align:center;display:flex;justify-content:center;gap:24px;flex-wrap:wrap">
+  <button id="recordBtn" onclick="startRecording()" style="background-color:#1976d2;color:white;border:none;border-radius:8px;padding:12px 20px;font-size:24px;cursor:pointer">
     شروع ضبط صدا
 
   </button>
