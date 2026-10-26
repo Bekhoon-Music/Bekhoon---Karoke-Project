@@ -39,12 +39,23 @@ s.oninput=()=>a.currentTime=+s.value;a.onended=()=>p.textContent='▶';
     توقف ضبط
   </button>
   <audio id="myRecording" controls style="display:none;width:100%;margin-top:12px"></audio>
+  <button onclick="hideRecording()" style="margin-top:10px">
+  بستن پخش‌کننده
+</button>
 </div>   
 <script>
 let recorder;
 let recordedChunks = [];
-
+function hideRecording() {
+const audio = document.getElementById('myRecording');
+audio.pause();
+audio.removeAttribute('src');
+audio.style.display = 'none';
+}  
 async function startRecording() {
+    const previousAudio = document.getElementById('myRecording');
+    previousAudio.pause();
+    previousAudio.style.display = 'none';
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     recordedChunks = [];
