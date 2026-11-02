@@ -97,22 +97,21 @@ function skip(v){a.currentTime=Math.max(0,Math.min(a.duration||47,a.currentTime+
   <button id="stopBtn" onclick="stopRecording()" disabled style="background-color:#d32f2f;color:white;border:none;border-radius:8px;padding:12px 24px;min-width:190px;display:inline-flex;align-items:center;justify-content:center;min-height:48px;box-sizing:border-box;font-size:16px;white-space:nowrap;direction:rtl;text-align:center;cursor:pointer">
     توقف ضبط
  </button>
-<audio id="myRecording" controls
-style="display:none;width:100%;margin-top:12px"></audio>
-
+<audio id="myRecording" style="display:none"></audio>
+  <div id="customPlayer" style="display:none;width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,#b2f5ea,#d6f0ff);border-radius:16px;box-sizing:border-box;align-items:center;justify-content:center;gap:12px">
+  <button id="playRecordingBtn" type="button" onclick="toggleRecordingPlayback()" style="background:#7c4dff;color:white;border:0;border-radius:50%;width:48px;height:48px;font-size:20px">▶</button>
+  <span id="recordingTime" style="font-size:15px;color:#333">00:00</span>
+  <button type="button" onclick="hideRecording()" style="background:#ff4081;color:white;border:0;border-radius:50%;width:42px;height:42px;font-size:24px">×</button>
+</div>
 <a id="downloadRecording" href="#" download
 style="display:none;margin-top:10px;background-color:#2e7d32;color:white;padding:12px 20px;border-radius:8px;text-decoration:none">
 ضبط صدات
 </a>
-<button onclick="hideRecording()" style="margin-top:10px;background-color:white;color:black;border:1px solid #ccc;border-radius:8px;padding:12px 20px;font-size:16px">
-  بستن پخش‌کننده
-</button> 
   <style>
 #downloadRecording {
   position: relative;
   display: none;
 }
-
 #downloadRecording::before,
 #downloadRecording::after {
   display: inline-block;
@@ -137,15 +136,22 @@ style="display:none;margin-top:10px;background-color:#2e7d32;color:white;padding
 let recorder;
 let recordedChunks = [];
 function hideRecording() {
-const audio = document.getElementById('myRecording');
-audio.pause();
-audio.removeAttribute('src');
-audio.style.display = 'none';
-}  
+  const audio = document.getElementById('myRecording');
+  audio.pause();
+  audio.removeAttribute('src');
+  audio.load();
+
+  document.getElementById('customPlayer').style.display = 'none';
+  document.getElementById('playRecordingBtn').textContent = '▶';
+  document.getElementById('recordingTime').textContent = '00:00';
+}
 async function startRecording() {
     const previousAudio = document.getElementById('myRecording');
     previousAudio.pause();
     previousAudio.style.display = 'none';
+  document.getElementById('customPlayer').style.display = 'none';
+document.getElementById('playRecordingBtn').textContent = '▶';
+document.getElementById('recordingTime').textContent = '00:00';
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     recordedChunks = [];
@@ -165,9 +171,15 @@ async function startRecording() {
  downloadLink.download = 'Bekhoon-Recording-001.' +
   ((recorder.mimeType || '').includes('mp4') ? 'mp4' : 'webm');
 downloadLink.style.display = 'inline-block';
-    player.style.display = 'block';
-    player.controls = true;
-    player.load();
+
+const customPlayer = document.getElementById('customPlayer');
+customPlayer.style.display = 'flex';
+
+player.controls = false;
+player.load();
+
+document.getElementById('playRecordingBtn').textContent = '▶';
+document.getElementById('recordingTime').textContent = '00:00';
   } else {
     alert('صدایی ضبط نشد. دوباره امتحان کن.');
   }
@@ -182,6 +194,35 @@ if (status) status.textContent = '🔴 ضبط صدا در حال انجام اس
     alert('برای ضبط صدا، اجازه دسترسی به میکروفن را بده.');
   }
 }
+  function toggleRecordingPlayback() {
+  const audio = document.getElementById('myRecording');
+  const button = document.getElementById('playRecordingBtn');
+
+  if (audio.paused) {
+    audio.play();
+    button.textContent = '❚❚';
+  } else {
+    audio.pause();
+    button.textContent = '▶';
+  }
+}
+  function updateRecordingTime() {
+  const audio = document.getElementById('myRecording');
+  const time = document.getElementById('recordingTime');
+
+  const minutes = Math.floor(audio.currentTime / 60);
+  const seconds = Math.floor(audio.currentTime % 60);
+
+  time.textContent =
+    String(minutes).padStart(2, '0') + ':' +
+    String(seconds).padStart(2, '0');
+}
+
+document.getElementById('myRecording').addEventListener('timeupdate', updateRecordingTime);
+
+document.getElementById('myRecording').addEventListener('ended', () => {
+  document.getElementById('playRecordingBtn').textContent = '▶';
+});
 function stopRecording() {
   if (recorder && recorder.state === 'recording') {
     recorder.stop();
