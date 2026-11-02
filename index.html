@@ -19,7 +19,7 @@ audio{width:100%;margin-top:15px}
 <div id="lyrics"></div><input id="seek" type="range" min="0" max="47" value="0" step=".01">
 <div class="times"><span id="now">00:00</span><span>00:47</span></div>
 <div class="controls"><button onclick="skip(-5)">↶</button>
-<button id="play" style="position:relative;display:flex;align-items:center;justify-content:center">
+<button id="play" onclick="toggle()" style="position:relative;display:flex;align-items:center;justify-content:center">
 <svg viewBox="0 0 100 100" width="100%" height="100%" style="position:absolute;inset:0;overflow:visible">
 <text x="50" y="18" fill="white" font-size="18" font-weight="bold" text-anchor="middle">بخون</text>
 <path d="M 39 34 L 39 62 L 65 48 Z" fill="white"/>
@@ -37,24 +37,14 @@ function toggle(){
   if(clickTimer){
     clearTimeout(clickTimer);
     clickTimer = null;
-
     a.currentTime = 0;
-    a.play().then(()=>{
-      status.textContent = 'در حال پخش 🎵';
-    }).catch(()=>{
-      status.textContent = 'از کنترل صوتی پایین صفحه استفاده کنید.';
-    });
-
+    a.play().catch(()=>{});
   } else {
     clickTimer = setTimeout(()=>{
       clickTimer = null;
 
       if(a.paused){
-        a.play().then(()=>{
-          status.textContent = 'در حال پخش 🎵';
-        }).catch(()=>{
-          status.textContent = 'از کنترل صوتی پایین صفحه استفاده کنید.';
-        });
+        a.play().catch(()=>{});
       } else {
         a.pause();
       }
