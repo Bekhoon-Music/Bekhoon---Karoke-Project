@@ -32,8 +32,7 @@ const L=[{"start": 4, "end": 8, "text": "امشب چراغا روشنه"}, {"sta
 L.forEach((x,i)=>{let d=document.createElement('div');d.className='line';d.id='l'+i;d.textContent=x.text;box.appendChild(d)});
 function fmt(v){v=Math.floor(v||0);return String(Math.floor(v/60)).padStart(2,'0')+':'+String(v%60).padStart(2,'0')}
 function toggle(){if(a.paused){a.play().then(()=>{status.textContent='در حال پخش 🎵'}).catch(()=>status.textContent='از کنترل صوتی پایین صفحه استفاده کنید.')}else{a.pause()}}
-a.ontimeupdate=()=>{s.value=a.currentTime;n.textContent=fmt(a.currentTime);let i=L.findLastIndex(x=>a.currentTime>=x.start);document.querySelectorAll('.line').forEach((e,j)=>e.classList.toggle('active',j===i));if(i>=0)document.getElementById('l'+i).scrollIntoView({behavior:'smooth',block:'center'})}
-s.oninput=()=>a.currentTime=+s.value;
+a.ontimeupdate=()=>{s.value=a.currentTime;n.textContent=fmt(a.currentTime);let i=L.findLastIndex(x=>a.currentTime>=x.start);document.querySelectorAll('.line').forEach((e,j)=>e.classList.toggle('active',j===i))}
 function skip(v){a.currentTime=Math.max(0,Math.min(a.duration||47,a.currentTime+v))}
 </script>
 
