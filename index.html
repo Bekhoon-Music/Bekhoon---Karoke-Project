@@ -51,7 +51,41 @@ function toggle(){
     }, 300);
   }
 }
-a.ontimeupdate=()=>{s.value=a.currentTime;n.textContent=fmt(a.currentTime);let i=L.findLastIndex(x=>a.currentTime>=x.start);document.querySelectorAll('.line').forEach((e,j)=>e.classList.toggle('active',j===i))}
+let userScrollUntil = 0;
+let lastActiveIndex = -1;
+
+['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(eventName => {
+  box.addEventListener(eventName, () => {
+    userScrollUntil = Date.now() + 5000;
+  });
+});
+
+a.ontimeupdate = () => {
+  s.value = a.currentTime;
+  n.textContent = fmt(a.currentTime);
+
+  let i = L.findLastIndex(x => a.currentTime >= x.start);
+
+  document.querySelectorAll('.line').forEach((e, j) => {
+    e.classList.toggle('active', j === i);
+  });
+
+  if (i >= 0 && i !== lastActiveIndex && Date.now() > userScrollUntil) {
+    const activeLine = document.getElementById('l' + i);
+    const boxRect = box.getBoundingClientRect();
+    const lineRect = activeLine.getBoundingClientRect();
+
+    const newPosition =
+      box.scrollTop +
+      lineRect.top -
+      boxRect.top -
+      (box.clientHeight - lineRect.height) / 2;
+
+    box.scrollTo({ top: newPosition, behavior: 'smooth' });
+  }
+
+  lastActiveIndex = i;
+};
 function skip(v){a.currentTime=Math.max(0,Math.min(a.duration||47,a.currentTime+v))}
 </script>
 
