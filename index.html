@@ -16,7 +16,17 @@ audio{width:100%;margin-top:15px}
 </style>
 <main class="app"><header><span>‹</span><span>BEKHOON</span><span>♡</span></header>
 <div class="cover">🎤</div><h1>امشب بخون</h1><p>BEKHOON ORIGINAL</p>
-<div id="lyrics"></div><input id="seek" type="range" min="0" max="47" value="0" step=".01">
+<div id="singingArea" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(130px,42%);gap:10px;align-items:center;margin:18px 0">
+
+  <div id="lyrics" style="height:180px;overflow:auto;text-align:center"></div>
+
+  <video id="cameraPreview"
+    autoplay muted playsinline
+    style="display:none;width:100%;height:210px;object-fit:cover;border-radius:14px">
+  </video>
+
+</div>
+  <input id="seek" type="range" min="0" max="47" value="0" step=".01">
 <div class="times"><span id="now">00:00</span><span>00:47</span></div>
 <div class="controls"><button onclick="skip(-5)">↶</button>
 <button id="play" onclick="toggle()" style="position:relative;display:flex;align-items:center;justify-content:center;touch-action:manipulation">
@@ -109,15 +119,20 @@ function skip(v){a.currentTime=Math.max(0,Math.min(a.duration||47,a.currentTime+
     توقف ضبط
  </button>
 <audio id="myRecording" style="display:none"></audio>
-  <video id="cameraPreview"
-  autoplay muted playsinline
-style="display:none;width:320px;max-width:100%;height:auto;border-radius:14px;margin:12px auto">
-</video>
+<div style="position:relative;width:100%;max-width:500px;margin:12px auto">
+  <button onclick="closeVideo()"
+    style="position:absolute;top:8px;right:8px;z-index:10;
+    background:#d32f2f;color:white;border:none;border-radius:50%;
+    width:36px;height:36px;font-size:24px;cursor:pointer">
+    ×
+  </button>
 
-<video id="videoRecording"
-  controls playsinline
-  style="display:none;width:100%;max-width:500px;margin:12px auto;border-radius:14px">
-</video>
+  <video id="videoRecording"
+    controls playsinline
+    style="display:none;width:100%;border-radius:14px">
+  </video>
+
+</div>
   <div id="customPlayer" style="display:none;width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,#b2f5ea,#d6f0ff);border-radius:16px;box-sizing:border-box;align-items:center;justify-content:center;gap:12px">
   <button id="playRecordingBtn" type="button" onclick="toggleRecordingPlayback()" style="background:#7c4dff;color:white;border:0;border-radius:50%;width:48px;height:48px;font-size:20px">▶</button>
   <span id="recordingTime" style="font-size:15px;color:#333">00:00</span>
@@ -291,7 +306,6 @@ async function startRecording() {
     String(minutes).padStart(2, '0') + ':' +
     String(seconds).padStart(2, '0');
 }
-
 document.getElementById('myRecording').addEventListener('timeupdate', updateRecordingTime);
 
 document.getElementById('myRecording').addEventListener('ended', () => {
@@ -305,6 +319,13 @@ function stopRecording() {
     const status = document.getElementById('status');
  if (status) status.textContent = 'ضبط تمام شد؛ صدایت را پخش کن.';
   }
+}
+function closeVideo() {
+  const video = document.getElementById('videoRecording');
+  video.pause();
+  video.removeAttribute('src');
+  video.load();
+  video.style.display = 'none';
 }
 </script>    
 </html>
