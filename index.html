@@ -119,7 +119,7 @@ function skip(v){a.currentTime=Math.max(0,Math.min(a.duration||47,a.currentTime+
     توقف ضبط
  </button>
 <audio id="myRecording" style="display:none"></audio>
-<div style="position:relative;width:100%;max-width:500px;margin:12px auto">
+<div id="videoContainer" style="display:none;position:relative;width:100%;max-width:500px;margin:12px auto">
   <button onclick="closeVideo()"
     style="position:absolute;top:8px;right:8px;z-index:10;
     background:#d32f2f;color:white;border:none;border-radius:50%;
@@ -185,6 +185,7 @@ async function startRecording() {
   const previousAudio = document.getElementById('myRecording');
   const cameraPreview = document.getElementById('cameraPreview');
   const videoPlayer = document.getElementById('videoRecording');
+  const videoContainer = document.getElementById('videoContainer');
   const customPlayer = document.getElementById('customPlayer');
   const downloadLink = document.getElementById('downloadRecording');
 
@@ -198,6 +199,7 @@ async function startRecording() {
 
   customPlayer.style.display = 'none';
   videoPlayer.style.display = 'none';
+  videoContainer.style.display = 'none';
   cameraPreview.style.display = 'none';
   cameraPreview.srcObject = null;
   downloadLink.style.display = 'none';
@@ -246,11 +248,13 @@ async function startRecording() {
           (mimeType.includes('mp4') ? 'mp4' : 'webm');
         downloadLink.style.display = 'inline-block';
 
-        if (recordingMode === 'video') {
-          videoPlayer.src = recordingUrl;
-          videoPlayer.style.display = 'block';
-          videoPlayer.load();
-        } else {
+       if (recordingMode === 'video') {
+        videoPlayer.src = recordingUrl;
+        videoContainer.style.display = 'block';
+        videoPlayer.style.display = 'block';
+        videoPlayer.load();
+       }
+          else {
           previousAudio.src = recordingUrl;
           previousAudio.controls = false;
           previousAudio.load();
@@ -322,10 +326,13 @@ function stopRecording() {
 }
 function closeVideo() {
   const video = document.getElementById('videoRecording');
+  const container = document.getElementById('videoContainer');
+
   video.pause();
   video.removeAttribute('src');
   video.load();
   video.style.display = 'none';
+  container.style.display = 'none';
 }
 </script>    
 </html>
