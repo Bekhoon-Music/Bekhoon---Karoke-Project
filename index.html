@@ -109,6 +109,15 @@ function skip(v){a.currentTime=Math.max(0,Math.min(a.duration||47,a.currentTime+
     توقف ضبط
  </button>
 <audio id="myRecording" style="display:none"></audio>
+  <video id="cameraPreview"
+  autoplay muted playsinline
+  style="display:none;width:240px;max-width:100%;border-radius:14px;margin:12px auto">
+</video>
+
+<video id="videoRecording"
+  controls playsinline
+  style="display:none;width:100%;max-width:500px;margin:12px auto;border-radius:14px">
+</video>
   <div id="customPlayer" style="display:none;width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,#b2f5ea,#d6f0ff);border-radius:16px;box-sizing:border-box;align-items:center;justify-content:center;gap:12px">
   <button id="playRecordingBtn" type="button" onclick="toggleRecordingPlayback()" style="background:#7c4dff;color:white;border:0;border-radius:50%;width:48px;height:48px;font-size:20px">▶</button>
   <span id="recordingTime" style="font-size:15px;color:#333">00:00</span>
@@ -146,6 +155,7 @@ style="display:none;margin-top:10px;background-color:#2e7d32;color:white;padding
 <script>
 let recorder;
 let recordedChunks = [];
+  let recordingMode = 'audio';
 function hideRecording() {
   const audio = document.getElementById('myRecording');
   audio.pause();
@@ -155,54 +165,107 @@ function hideRecording() {
   document.getElementById('customPlayer').style.display = 'none';
   document.getElementById('playRecordingBtn').textContent = '▶';
   document.getElementById('recordingTime').textContent = '00:00';
-}
-async function startRecording() {
-    const previousAudio = document.getElementById('myRecording');
-    previousAudio.pause();
-    previousAudio.style.display = 'none';
-  document.getElementById('customPlayer').style.display = 'none';
-document.getElementById('playRecordingBtn').textContent = '▶';
-document.getElementById('recordingTime').textContent = '00:00';
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    recordedChunks = [];
-    recorder = new MediaRecorder(stream);
-    recorder.ondataavailable = (event) => {
-      if (event.data.size > 0) recordedChunks.push(event.data);
-    };
- recorder.onstop = () => {
-  const blob = new Blob(recordedChunks, {
-    type: recorder.mimeType || 'audio/webm'
-  });
-  const player = document.getElementById('myRecording');
-  if (blob.size > 0 && player) {
-   const downloadLink = document.getElementById('downloadRecording'); 
-    player.src = URL.createObjectURL(blob);
- downloadLink.href = player.src;
- downloadLink.download = 'Bekhoon-Recording-001.' +
-  ((recorder.mimeType || '').includes('mp4') ? 'mp4' : 'webm');
-downloadLink.style.display = 'inline-block';
-
-const customPlayer = document.getElementById('customPlayer');
-customPlayer.style.display = 'flex';
-
-player.controls = false;
-player.load();
-
-document.getElementById('playRecordingBtn').textContent = '▶';
-document.getElementById('recordingTime').textContent = '00:00';
-  } else {
-    alert('صدایی ضبط نشد. دوباره امتحان کن.');
   }
-  stream.getTracks().forEach(track => track.stop());
-};
+async function startRecording() {
+  const previousAudio = document.getElementById('myRecording');
+  const cameraPreview = document.getElementById('cameraPreview');
+  const videoPlayer = document.getElementById('videoRecording');
+  const customPlayer = document.getElementById('customPlayer');
+  const downloadLink = document.getElementById('downloadRecording');
+
+  previousAudio.pause();
+  previousAudio.removeAttribute('src');
+  previousAudio.load();
+
+  videoPlayer.pause();
+  videoPlayer.removeAttribute('src');
+  videoPlayer.load();
+
+  customPlayer.style.display = 'none';
+  videoPlayer.style.display = 'none';
+  cameraPreview.style.display = 'none';
+  cameraPreview.srcObject = null;
+  downloadLink.style.display = 'none';
+
+  document.getElementById('playRecordingBtn').textContent = '▶';
+  document.getElementById('recordingTime').textContent = '00:00';
+
+  const selectedMode =
+    document.querySelector('input[name="recordingMode"]:checked')?.value || 'audio';
+
+  recordingMode = selectedMode;
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia(
+      selectedMode === 'video'
+        ? { audio: true, video: true }
+        : { audio: true }
+    );
+
+    recordedChunks = [];
+
+    if (selectedMode === 'video') {
+      cameraPreview.srcObject = stream;
+      cameraPreview.style.display = 'block';
+      cameraPreview.play().catch(() => {});
+    }
+
+    recorder = new MediaRecorder(stream);
+
+    recorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        recordedChunks.push(event.data);
+      }
+    };
+
+    recorder.onstop = () => {
+      const mimeType = recorder.mimeType || 'video/webm';
+      const blob = new Blob(recordedChunks, { type: mimeType });
+
+      if (blob.size > 0) {
+        const recordingUrl = URL.createObjectURL(blob);
+
+        downloadLink.href = recordingUrl;
+        downloadLink.download =
+          'Bekhoon-Recording-001.' +
+          (mimeType.includes('mp4') ? 'mp4' : 'webm');
+        downloadLink.style.display = 'inline-block';
+
+        if (recordingMode === 'video') {
+          videoPlayer.src = recordingUrl;
+          videoPlayer.style.display = 'block';
+          videoPlayer.load();
+        } else {
+          previousAudio.src = recordingUrl;
+          previousAudio.controls = false;
+          previousAudio.load();
+          customPlayer.style.display = 'flex';
+        }
+      } else {
+        alert('صدایی ضبط نشد. دوباره امتحان کن.');
+      }
+
+      cameraPreview.pause();
+      cameraPreview.srcObject = null;
+      cameraPreview.style.display = 'none';
+
+      stream.getTracks().forEach(track => track.stop());
+    };
+
     recorder.start();
+
     document.getElementById('recordBtn').disabled = true;
     document.getElementById('stopBtn').disabled = false;
+
     const status = document.getElementById('status');
-if (status) status.textContent = '🔴 ضبط صدا در حال انجام است';
+    if (status) {
+      status.textContent = '🔴 ضبط در حال انجام است';
+    }
+
   } catch (error) {
-    alert('برای ضبط صدا، اجازه دسترسی به میکروفن را بده.');
+    alert('برای ضبط، اجازه دسترسی به میکروفن و دوربین را بده.');
+    cameraPreview.srcObject = null;
+    cameraPreview.style.display = 'none';
   }
 }
   function toggleRecordingPlayback() {
