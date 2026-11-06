@@ -32,14 +32,7 @@ audio{width:100%;margin-top:15px}
    <button id="recordBtn" onclick="startRecording()" style="background-color:#1976d2;color:white;border:none;border-radius:8px;padding:12px 24px;min-width:190px;display:inline-flex;align-items:center;justify-content:center;min-height:48px;box-sizing:border-box;;font-size:16px;white-space:nowrap;direction:rtl;text-align:center;cursor:pointer">
     شروع ضبط صدا
   </button>
-<div id="videoContainer" style="display:none;position:relative;width:100%;max-width:500px;margin:12px auto">
-  <button onclick="closeVideo()"
-    style="position:absolute;top:8px;right:8px;z-index:10;
-    background:#d32f2f;color:white;border:none;border-radius:50%;
-    width:36px;height:36px;font-size:24px;cursor:pointer">
-    ×
-  </button>
-  </div>
+
 <div class="controls"><button onclick="skip(-5)">↶</button>
 <button id="play" onclick="toggle()" style="position:relative;display:flex;align-items:center;justify-content:center;touch-action:manipulation">
 <svg viewBox="0 0 100 100" width="100%" height="100%" style="position:absolute;inset:0;overflow:visible">
@@ -131,13 +124,13 @@ function skip(v){a.currentTime=Math.max(0,Math.min(a.duration||47,a.currentTime+
     autoplay muted playsinline
     style="display:none;width:100%;max-width:500px;border-radius:14px">
 </video>
+  </div>
 <div id="videoContainer" style="display:none;position:relative;width:100%;max-width:500px;margin:12px auto">
   <button type="button" onclick="closeVideo()" style="position:absolute;top:8px;right:8px;z-index:2;background:#ff4081;color:white;border:0;border-radius:50%;width:40px;height:40px;font-size:24px">×</button>
   <video id="videoRecording" controls playsinline style="display:none;width:100%;border-radius:14px"></video>
 </div>
 <audio id="myRecording" style="display:none"></audio>
 
-</div>
   <div id="customPlayer" style="display:none;width:100%;margin-top:12px;padding:12px;background:linear-gradient(135deg,#b2f5ea,#d6f0ff);border-radius:16px;box-sizing:border-box;align-items:center;justify-content:center;gap:12px">
   <button id="playRecordingBtn" type="button" onclick="toggleRecordingPlayback()" style="background:#7c4dff;color:white;border:0;border-radius:50%;width:48px;height:48px;font-size:20px">▶</button>
   <span id="recordingTime" style="font-size:15px;color:#333">00:00</span>
